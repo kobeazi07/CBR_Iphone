@@ -159,10 +159,11 @@ class DashboardController extends Controller
     $inputGejala = $request->input('gejala'); // Misalnya [G-01, G-02, ...]
     // $getGdiagnosas = GdiagnosasModel::get();
     // dd($request->all());
+    
+
+    // cek kesamaan
     $gejalas = GejalaModel::whereIn('id', $inputGejala)->get();
     $bgejalas = $gejalas->pluck('bobot')->toArray();
-    // dd($bgejalas);
-
     $gdiagnosas = GdiagnosasModel::whereIn('gejala_id', $inputGejala)->get();
     $diagnosasIds = $gdiagnosas->pluck('diagnosas_id')->toArray();
     $hdiagnosas = HdiagnosasModel::whereIn('id', $diagnosasIds)->get();
@@ -170,6 +171,10 @@ class DashboardController extends Controller
     $dJenis = JenisModel::whereIn('id', $dJenisIds)->get();
     $ciriJenis = CiriCiriKerusakan::where('id_kerusakan',$dJenisIds)->get();
     $bJenis = $ciriJenis->pluck('bobot')->toArray();
+    // akhir check kesamaan
+
+    
+    // dd($bgejalas);
     // dd($ciriJenis);
     $bmatched = count($ciriJenis);  
     $totalWeightSimilarityScore = 0;
