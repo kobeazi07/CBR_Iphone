@@ -158,6 +158,7 @@ class DashboardController extends Controller
     // Ambil gejala yang dikirimkan oleh user
     $inputGejala = $request->input('gejala'); // Misalnya [G-01, G-02, ...]
     // $getGdiagnosas = GdiagnosasModel::get();
+    // dd($request->all());
     $gejalas = GejalaModel::whereIn('id', $inputGejala)->get();
     $bgejalas = $gejalas->pluck('bobot')->toArray();
     // dd($bgejalas);
@@ -188,11 +189,9 @@ class DashboardController extends Controller
 
                 //   dd(($bestMatch);
         $namaKerusakan = $bestMatch[0]['nama_kerusakan'];
+        $idKerusakan = $bestMatch[0]['id'];
         $solusi = $bestMatch[0]['solusi'];
         //    dd($namaKerusakan, $solusi);
-
-        
-
         if ($similarityScore > $highestScore) {
             $highestScore = $similarityScore;
             $bestMatch = $dJenis;
@@ -203,6 +202,42 @@ class DashboardController extends Controller
             ];
             // dd('hh',$bestMatch);
             //  dd('bs',$bestScoreDetails);
+            $diagnosas_id =  HdiagnosasModel::create([
+                'id_kerusakan' =>  $idKerusakan,
+                'solusi' => $bestScoreDetails['solusi'],
+            ]);
+
+            // dd($bestScoreDetails);
+
+//             try {
+//     foreach ($inputGejala as $gejalaId) {
+//         $gdiagnosas = GdiagnosasModel::create([
+//             'diagnosas_id' => $diagnosas_id->id,
+//             'gejala_id' => $gejalaId,
+//         ]);
+
+//         // Debug: Log hasil inputan ke database
+//         dd('Berhasil Disimpan:', $gdiagnosas->toArray());
+//     }
+// } catch (\Exception $e) {
+//     dd('Gagal menyimpan data:', $e->getMessage());
+// }
+            foreach ($inputGejala as $gejalaId) {
+            //   dd($diagnosas_id->id);
+              GdiagnosasModel::create([
+                    'diagnosas_id' => $diagnosas_id->id, // ID dari HdiagnosasModel
+                    'gejala_id' => $gejalaId,
+                ]);
+            }
+                    // GdiagnosasModel::create([
+                        //             //       'solusi' => $bestScoreDetails['solusi'],
+                // try {
+                //             //       'diagnosas_id' => $diagnosas_id,
+                //             //       'gejala_id'=>   $inputGejala,
+                //             // ]);
+                // } catch (\Exception $e) {
+                //     return response()->json(['error' => 'Failed to save data: ' . $e->getMessage()], 500);
+                // }
         }
 
         // if($bestScoreDetails){
